@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+
+Property value: <input type="text" value="100000" id="propertyValue">$<br>
+Down payment: <input type="text" value="10000" id="downPayment">$<br>
+Mortgage interest rate: <input type="text" value="6" id="mortgageInterestRate">%<br>
+Mortgage monthly payment: <input type="text" value="500" id="mortgageMonthlyPayment">$<br>
+Rental value (after taxes and all expenses except mortgage): <input type="text" value="1000" id="rentalValue">$<br>
+<button onclick="calculate()" type="button">Calculate</button><br><br><br>
+
+<table id="table" style="width:100%">
+    <tr>
+      <th>Month</th>
+      <th>Debt</th> 
+      <th>Revenue</th>
+      <th>Net worth</th>
+      <th>ROI</th>
+    </tr>
+  </table>
+
+  <script>
+      function calculate(){
+        var propertyValue = document.getElementById("propertyValue").value*1
+        var downPayment = document.getElementById("downPayment").value*1
+        var mortgageInterestRate = document.getElementById("mortgageInterestRate").value/100/12
+        var mortgageMonthlyPayment = document.getElementById("mortgageMonthlyPayment").value*1
+        var rentalValue = document.getElementById("rentalValue").value*1
+        var debt = propertyValue-downPayment
+        var month = 0
+        var revenue = 0
+        
+        var table = document.getElementById("table");
+        table.getElementsByTagName("tbody")[0].innerHTML = table.rows[0].innerHTML;
+
+        while (debt > 0 && month < 1000){
+            month++
+            debt -= Math.round(mortgageMonthlyPayment-debt*mortgageInterestRate)
+            revenue += Math.round(rentalValue-mortgageMonthlyPayment)
+            var propertyNetWorth = propertyValue-debt
+            var roi = Math.round( (revenue+propertyNetWorth-downPayment)/downPayment/(month/12)*100*10)/10
+
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);  
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            cell1.innerHTML = Math.floor( month % 12 == 0 ? month/12-1 : month/12)+'y '+(month % 12 == 0 ? '12' : month % 12)+'m';
+            cell2.innerHTML = debt+'$';
+            cell3.innerHTML = revenue+'$';
+            cell4.innerHTML = (propertyNetWorth+revenue)+'$';
+            cell5.innerHTML = roi+'%';
+        }
+      }
+  </script>
+</body>
+</html>
